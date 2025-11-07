@@ -13,7 +13,7 @@ import {
 } from 'react-native-gesture-handler';
 
 // Components
-import { BlurView } from 'expo-blur';
+import { BlurView } from '@react-native-community/blur';
 
 // Utils
 import { styles } from './styles';
@@ -94,7 +94,7 @@ const BackdropComponent = () => {
 
   const animatedContainerProps = useAnimatedProps(() => {
     return {
-      intensity: withTiming(
+      blurAmount: withTiming(
         state.value === CONTEXT_MENU_STATE.ACTIVE ? 100 : 0,
         {
           duration: HOLD_ITEM_TRANSFORM_DURATION,

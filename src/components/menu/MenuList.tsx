@@ -16,7 +16,7 @@ import {
   calculateMenuHeight,
   menuAnimationAnchor,
 } from '../../utils/calculations';
-import { BlurView } from 'expo-blur';
+import { BlurView } from '@react-native-community/blur';
 
 import MenuItems from './MenuItems';
 
@@ -107,7 +107,7 @@ const MenuListComponent = () => {
   }, [theme]);
 
   const animatedProps = useAnimatedProps(() => {
-    return { tint: theme.value };
+    return { blurType: theme.value };
   }, [theme]);
 
   const setter = (items: MenuItemProps[]) => {
@@ -127,7 +127,7 @@ const MenuListComponent = () => {
 
   return (
     <AnimatedView
-      intensity={100}
+      blurAmount={100}
       animatedProps={animatedProps}
       style={[styles.menuContainer, messageStyles]}
     >

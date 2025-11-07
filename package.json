@@ -64,6 +64,8 @@
     "husky": "^5.0.9",
     "jest": "~25.2.6",
     "prettier": "^2.2.1",
+    "@react-native-community/blur": "^4.0.0",
+    "expo-haptics": "^12.0.1",
     "react": "16.13.1",
     "react-native": "~0.63.4",
     "react-native-builder-bob": "^0.17.1",
@@ -74,7 +76,7 @@
     "typescript": "~4.0.0"
   },
   "peerDependencies": {
-    "expo-blur": "*",
+    "@react-native-community/blur": "*",
     "expo-haptics": "*",
     "react": "*",
     "react-native": "*",
