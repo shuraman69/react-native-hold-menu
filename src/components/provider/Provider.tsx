@@ -1,6 +1,10 @@
 import React, { memo, useEffect, useMemo } from 'react';
 import { PortalProvider } from '@gorhom/portal';
-import Animated, { useSharedValue, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
+import Animated, {
+  useSharedValue,
+  useAnimatedReaction,
+  runOnJS,
+} from 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Components
@@ -13,6 +17,7 @@ import { StateProps, Action } from './reducer';
 import { CONTEXT_MENU_STATE } from '../../constants';
 import { MenuInternalProps } from '../menu/types';
 import Menu from '../menu';
+import Content from './Content';
 
 export interface Store {
   state: StateProps;
@@ -28,6 +33,7 @@ const ProviderComponent = ({
   safeAreaInsets,
   onOpen,
   onClose,
+  renderContent,
 }: HoldMenuProviderProps) => {
   if (iconComponent)
     AnimatedIcon = Animated.createAnimatedComponent(iconComponent);
@@ -58,14 +64,12 @@ const ProviderComponent = ({
     state => {
       switch (state) {
         case CONTEXT_MENU_STATE.ACTIVE: {
-          if (onOpen)
-            runOnJS(onOpen)();
-          break
+          if (onOpen) runOnJS(onOpen)();
+          break;
         }
         case CONTEXT_MENU_STATE.END: {
-          if (onClose)
-            runOnJS(onClose)();
-          break
+          if (onClose) runOnJS(onClose)();
+          break;
         }
       }
     },
@@ -94,6 +98,7 @@ const ProviderComponent = ({
           {children}
           <Backdrop />
           <Menu />
+          <Content renderContent={renderContent} />
         </PortalProvider>
       </InternalContext.Provider>
     </GestureHandlerRootView>

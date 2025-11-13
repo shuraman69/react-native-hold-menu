@@ -152,7 +152,7 @@ const HoldItemComponent = ({
     const height =
       deviceOrientation === 'portrait' ? WINDOW_HEIGHT : WINDOW_WIDTH;
 
-    const isAnchorPointTop = transformOrigin.value.includes('top');
+    const isAnchorPointTop = itemRectY.value > WINDOW_HEIGHT / 2;
 
     let tY = 0;
     if (!disableMove) {

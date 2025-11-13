@@ -30,4 +30,6 @@ export interface HoldMenuProviderProps {
 
   onOpen?: () => void;
   onClose?: () => void;
+
+  renderContent?: () => React.ReactNode;
 }
