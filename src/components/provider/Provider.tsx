@@ -26,7 +26,7 @@ export interface Store {
 
 export let AnimatedIcon: any;
 
-const ProviderComponent = ({
+const ProviderComponent: React.FC<HoldMenuProviderProps> = ({
   children,
   theme: selectedTheme,
   iconComponent,
@@ -34,7 +34,7 @@ const ProviderComponent = ({
   onOpen,
   onClose,
   renderContent,
-}: HoldMenuProviderProps) => {
+}) => {
   if (iconComponent)
     AnimatedIcon = Animated.createAnimatedComponent(iconComponent);
 
@@ -105,6 +105,6 @@ const ProviderComponent = ({
   );
 };
 
-const Provider = memo(ProviderComponent);
+const Provider = memo(ProviderComponent) as React.FC<HoldMenuProviderProps>;
 
 export default Provider;

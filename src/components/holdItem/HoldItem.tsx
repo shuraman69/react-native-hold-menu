@@ -55,7 +55,7 @@ import { useInternal } from '../../hooks';
 
 type Context = { didMeasureLayout: boolean };
 
-const HoldItemComponent = ({
+const HoldItemComponent: React.FC<HoldItemProps> = ({
   items,
   bottom,
   containerStyles,
@@ -67,7 +67,7 @@ const HoldItemComponent = ({
   closeOnTap,
   longPressMinDurationMs = 150,
   children,
-}: HoldItemProps) => {
+}) => {
   //#region hooks
   const { state, menuProps, safeAreaInsets } = useInternal();
   const deviceOrientation = useDeviceOrientation();
@@ -443,6 +443,6 @@ const HoldItemComponent = ({
   //#endregion
 };
 
-const HoldItem = memo(HoldItemComponent);
+const HoldItem = memo(HoldItemComponent) as React.FC<HoldItemProps>;
 
 export default HoldItem;

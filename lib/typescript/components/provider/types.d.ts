@@ -21,7 +21,7 @@ export interface HoldMenuProviderProps {
    * safeAreaInsets={insets}
    * ```
    */
-  safeAreaInsets: {
+  safeAreaInsets?: {
     top: number;
     right: number;
     bottom: number;
