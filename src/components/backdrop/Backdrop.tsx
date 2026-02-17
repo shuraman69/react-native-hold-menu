@@ -71,8 +71,10 @@ const BackdropComponent = () => {
   );
 
   const animatedContainerStyle = useAnimatedStyle(() => {
+    const isActive = state.value === CONTEXT_MENU_STATE.ACTIVE;
+
     const topValueAnimation = () =>
-      state.value === CONTEXT_MENU_STATE.ACTIVE
+      isActive
         ? 0
         : withDelay(
             HOLD_ITEM_TRANSFORM_DURATION,
@@ -82,13 +84,14 @@ const BackdropComponent = () => {
           );
 
     const opacityValueAnimation = () =>
-      withTiming(state.value === CONTEXT_MENU_STATE.ACTIVE ? 1 : 0, {
+      withTiming(isActive ? 1 : 0, {
         duration: HOLD_ITEM_TRANSFORM_DURATION,
       });
 
     return {
       top: topValueAnimation(),
       opacity: opacityValueAnimation(),
+      pointerEvents: isActive ? 'auto' : 'none',
     };
   });
 

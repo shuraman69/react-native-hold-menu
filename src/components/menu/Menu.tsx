@@ -29,17 +29,18 @@ const MenuComponent = () => {
     const left = menuProps.value.itemX;
     const width = menuProps.value.itemWidth;
     const tY = menuProps.value.transformValue;
+    const isActive = state.value === CONTEXT_MENU_STATE.ACTIVE;
 
     return {
       top,
       left,
       width,
+      pointerEvents: isActive ? 'auto' : 'none',
       transform: [
         {
-          translateY:
-            state.value === CONTEXT_MENU_STATE.ACTIVE
-              ? withSpring(tY, SPRING_CONFIGURATION)
-              : withTiming(0, { duration: HOLD_ITEM_TRANSFORM_DURATION }),
+          translateY: isActive
+            ? withSpring(tY, SPRING_CONFIGURATION)
+            : withTiming(0, { duration: HOLD_ITEM_TRANSFORM_DURATION }),
         },
       ],
     };
