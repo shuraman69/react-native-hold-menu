@@ -1,14 +1,23 @@
 import { ViewStyle } from 'react-native';
-import { MenuItemProps } from '../menu/types';
+import { MenuItemProps, RenderCustomView } from '../menu/types';
 import { TransformOriginAnchorPosition } from '../../utils/calculations';
 
-export type HoldItemProps = {
+type HoldItemBaseProps = {
   /**
    * List of context menu items.
    * @type MenuItemProps[]
    * @default []
    */
-  items: MenuItemProps[];
+  items?: MenuItemProps[];
+
+  /**
+   * Render function for a custom view displayed on the opposite side of the menu.
+   * Receives { closeMenu } prop to programmatically close the context menu.
+   * @type RenderCustomView
+   * @examples
+   * renderCustomView={({ closeMenu }) => <ReactionsBar onSelect={() => closeMenu()} />}
+   */
+  renderCustomView?: RenderCustomView;
 
   /**
    * Object of keys that same name with items to match parameters to onPress actions.
@@ -125,6 +134,16 @@ export type HoldItemProps = {
    */
   longPressMinDurationMs?: number;
 };
+
+export type HoldItemWithItems = HoldItemBaseProps & {
+  items: MenuItemProps[];
+};
+
+export type HoldItemWithCustomView = HoldItemBaseProps & {
+  renderCustomView: RenderCustomView;
+};
+
+export type HoldItemProps = HoldItemWithItems | HoldItemWithCustomView;
 
 export type GestureHandlerProps = {
   children: React.ReactElement | React.ReactElement[];
