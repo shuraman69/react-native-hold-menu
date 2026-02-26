@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo, useEffect, useMemo, useRef } from 'react';
 import { PortalProvider } from '@gorhom/portal';
 import Animated, { useSharedValue, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -13,6 +13,8 @@ import { StateProps, Action } from './reducer';
 import { CONTEXT_MENU_STATE } from '../../constants';
 import { MenuInternalProps } from '../menu/types';
 import Menu from '../menu';
+import CustomView from '../customView/CustomView';
+import { RenderCustomView } from '../menu/types';
 
 export interface Store {
   state: StateProps;
@@ -46,7 +48,9 @@ const ProviderComponent = ({
     menuHeight: 0,
     transformValue: 0,
     actionParams: {},
+    hasCustomView: false,
   });
+  const customViewRef = useRef<RenderCustomView | null>(null);
 
   useEffect(() => {
     theme.value = selectedTheme || 'light';
@@ -77,6 +81,7 @@ const ProviderComponent = ({
       state,
       theme,
       menuProps,
+      customViewRef,
       safeAreaInsets: safeAreaInsets || {
         top: 0,
         bottom: 0,
@@ -94,6 +99,7 @@ const ProviderComponent = ({
           {children}
           <Backdrop />
           <Menu />
+          <CustomView />
         </PortalProvider>
       </InternalContext.Provider>
     </GestureHandlerRootView>

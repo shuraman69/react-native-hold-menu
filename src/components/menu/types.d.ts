@@ -13,6 +13,12 @@ export type MenuListProps = {
   items: MenuItemProps[];
 };
 
+export type CustomViewProps = {
+  closeMenu: () => void;
+};
+
+export type RenderCustomView = (props: CustomViewProps) => React.ReactElement;
+
 export type MenuInternalProps = {
   items: MenuItemProps[];
   itemHeight: number;
@@ -25,4 +31,5 @@ export type MenuInternalProps = {
   actionParams: {
     [name: string]: (string | number)[];
   };
+  hasCustomView: boolean;
 };

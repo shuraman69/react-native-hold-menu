@@ -57,6 +57,7 @@ type Context = { didMeasureLayout: boolean };
 
 const HoldItemComponent = ({
   items,
+  renderCustomView,
   bottom,
   containerStyles,
   disableMove,
@@ -69,7 +70,7 @@ const HoldItemComponent = ({
   children,
 }: HoldItemProps) => {
   //#region hooks
-  const { state, menuProps, safeAreaInsets } = useInternal();
+  const { state, menuProps, customViewRef, safeAreaInsets } = useInternal();
   const deviceOrientation = useDeviceOrientation();
   //#endregion
 
@@ -90,6 +91,7 @@ const HoldItemComponent = ({
 
   const key = useMemo(() => `hold-item-${nanoid()}`, []);
   const menuHeight = useMemo(() => {
+    if (!items || items.length === 0) return 0;
     const itemsWithSeparator = items.filter(item => item.withSeparator);
     return calculateMenuHeight(items.length, itemsWithSeparator.length);
   }, [items]);
@@ -175,8 +177,14 @@ const HoldItemComponent = ({
     return tY;
   };
 
+  const updateCustomViewRef = () => {
+    customViewRef.current = renderCustomView || null;
+  };
+
   const setMenuProps = () => {
     'worklet';
+
+    runOnJS(updateCustomViewRef)();
 
     menuProps.value = {
       itemHeight: itemRectHeight.value,
@@ -185,9 +193,10 @@ const HoldItemComponent = ({
       itemX: itemRectX.value,
       anchorPosition: transformOrigin.value,
       menuHeight: menuHeight,
-      items,
+      items: items || [],
       transformValue: transformValue.value,
       actionParams: actionParams || {},
+      hasCustomView: !!renderCustomView,
     };
   };
 
@@ -200,8 +209,9 @@ const HoldItemComponent = ({
 
   const onCompletion = (isFinised?: boolean) => {
     'worklet';
-    const isListValid = items && items.length > 0;
-    if (isFinised && isListValid) {
+    const hasItems = items && items.length > 0;
+    const hasCustomView = !!renderCustomView;
+    if (isFinised && (hasItems || hasCustomView)) {
       state.value = CONTEXT_MENU_STATE.ACTIVE;
       isActive.value = true;
       scaleBack();
@@ -211,8 +221,6 @@ const HoldItemComponent = ({
     }
 
     isAnimationStarted.value = false;
-
-    // TODO: Warn user if item list is empty or not given
   };
 
   const scaleHold = () => {
