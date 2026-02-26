@@ -135,15 +135,7 @@ type HoldItemBaseProps = {
   longPressMinDurationMs?: number;
 };
 
-export type HoldItemWithItems = HoldItemBaseProps & {
-  items: MenuItemProps[];
-};
-
-export type HoldItemWithCustomView = HoldItemBaseProps & {
-  renderCustomView: RenderCustomView;
-};
-
-export type HoldItemProps = HoldItemWithItems | HoldItemWithCustomView;
+export type HoldItemProps = HoldItemBaseProps;
 
 export type GestureHandlerProps = {
   children: React.ReactElement | React.ReactElement[];
