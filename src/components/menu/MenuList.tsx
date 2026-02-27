@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 
 import Animated, {
   runOnJS,
-  useAnimatedProps,
   useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
@@ -16,14 +15,12 @@ import {
   calculateMenuHeight,
   menuAnimationAnchor,
 } from '../../utils/calculations';
-import { BlurView } from '@react-native-community/blur';
 
 import MenuItems from './MenuItems';
 
 import {
   SPRING_CONFIGURATION_MENU,
   HOLD_ITEM_TRANSFORM_DURATION,
-  IS_IOS,
   CONTEXT_MENU_STATE,
 } from '../../constants';
 
@@ -32,8 +29,6 @@ import { MenuItemProps } from './types';
 import { useInternal } from '../../hooks';
 import { deepEqual } from '../../utils/validations';
 import { leftOrRight } from './calculations';
-
-const AnimatedView = Animated.createAnimatedComponent(BlurView);
 
 const MenuListComponent = () => {
   const { state, theme, menuProps } = useInternal();
@@ -94,20 +89,10 @@ const MenuListComponent = () => {
   });
 
   const animatedInnerContainerStyle = useAnimatedStyle(() => {
+    const color = theme.value === 'light' ? '#fff' : '#1A1A1A';
     return {
-      backgroundColor:
-        theme.value === 'light'
-          ? IS_IOS
-            ? 'rgba(255, 255, 255, .75)'
-            : 'rgba(255, 255, 255, .95)'
-          : IS_IOS
-          ? 'rgba(0,0,0,0.5)'
-          : 'rgba(39, 39, 39, .8)',
+      backgroundColor: color,
     };
-  }, [theme]);
-
-  const animatedProps = useAnimatedProps(() => {
-    return { blurType: theme.value };
   }, [theme]);
 
   const setter = (items: MenuItemProps[]) => {
@@ -126,11 +111,7 @@ const MenuListComponent = () => {
   );
 
   return (
-    <AnimatedView
-      blurAmount={100}
-      animatedProps={animatedProps}
-      style={[styles.menuContainer, messageStyles]}
-    >
+    <Animated.View style={[styles.menuContainer, messageStyles]}>
       <Animated.View
         style={[
           StyleSheet.absoluteFillObject,
@@ -140,7 +121,7 @@ const MenuListComponent = () => {
       >
         <MenuItems items={itemList} />
       </Animated.View>
-    </AnimatedView>
+    </Animated.View>
   );
 };
 
