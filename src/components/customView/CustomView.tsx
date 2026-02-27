@@ -5,6 +5,7 @@ import Animated, {
   runOnJS,
   useAnimatedReaction,
   useAnimatedStyle,
+  withDelay,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
@@ -105,12 +106,14 @@ const CustomViewComponent = () => {
 
     const scaleAnimation =
       state.value === CONTEXT_MENU_STATE.ACTIVE
-        ? withSpring(1, SPRING_CONFIGURATION_MENU)
+        ? withDelay(150, withSpring(1, SPRING_CONFIGURATION_MENU))
         : withTiming(0, { duration: HOLD_ITEM_TRANSFORM_DURATION });
 
-    const opacityAnimation = withTiming(
-      state.value === CONTEXT_MENU_STATE.ACTIVE ? 1 : 0,
-      { duration: HOLD_ITEM_TRANSFORM_DURATION }
+    const opacityAnimation = withDelay(
+      150,
+      withTiming(state.value === CONTEXT_MENU_STATE.ACTIVE ? 1 : 0, {
+        duration: HOLD_ITEM_TRANSFORM_DURATION,
+      })
     );
 
     // Scale anchor: scale from the edge closest to the item

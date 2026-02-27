@@ -151,8 +151,17 @@ const HoldItemComponent = ({
   const calculateTransformValue = () => {
     'worklet';
 
-    const height =
+    const screenH =
       deviceOrientation === 'portrait' ? WINDOW_HEIGHT : WINDOW_WIDTH;
+
+    const hasCustomView = !!renderCustomView;
+
+    // If custom view exists, center item on screen
+    if (hasCustomView && !disableMove) {
+      const itemCenterY = itemRectY.value + itemRectHeight.value / 2;
+      const screenCenterY = screenH / 2;
+      return screenCenterY - itemCenterY;
+    }
 
     const isAnchorPointTop = transformOrigin.value.includes('top');
 
@@ -166,7 +175,7 @@ const HoldItemComponent = ({
           styleGuide.spacing +
           (safeAreaInsets?.bottom || 0);
 
-        tY = topTransform > height ? height - topTransform : 0;
+        tY = topTransform > screenH ? screenH - topTransform : 0;
       } else {
         const bottomTransform =
           itemRectY.value - menuHeight - (safeAreaInsets?.top || 0);
