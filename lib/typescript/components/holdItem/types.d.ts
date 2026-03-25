@@ -133,6 +133,14 @@ type HoldItemBaseProps = {
    * longPressMinDurationMs={250}
    */
   longPressMinDurationMs?: number;
+
+  /**
+   * Callback fired when the menu is activated
+   * @type function
+   * @examples
+   * onActivate={() => console.log('Menu opened')}
+   */
+  onActivate?: () => void;
 };
 
 export type HoldItemProps = HoldItemBaseProps;

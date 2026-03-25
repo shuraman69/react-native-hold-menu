@@ -67,6 +67,7 @@ const HoldItemComponent = ({
   actionParams,
   closeOnTap,
   longPressMinDurationMs = 150,
+  onActivate,
   children,
 }: HoldItemProps) => {
   //#region hooks
@@ -226,6 +227,9 @@ const HoldItemComponent = ({
       scaleBack();
       if (hapticFeedback !== 'None') {
         runOnJS(hapticResponse)();
+      }
+      if (onActivate) {
+        runOnJS(onActivate)();
       }
     }
 
