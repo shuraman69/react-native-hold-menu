@@ -1,6 +1,6 @@
 import Animated from 'react-native-reanimated';
 
-import { MENU_WIDTH } from '../../constants';
+import { MENU_WIDTH, WINDOW_WIDTH } from '../../constants';
 import {
   MENU_TEXT_DARK_COLOR,
   MENU_TEXT_DESTRUCTIVE_COLOR_DARK,
@@ -17,6 +17,7 @@ export const leftOrRight = (
 
   const anchorPositionHorizontal = menuProps.value.anchorPosition.split('-')[1];
   const itemWidth = menuProps.value.itemWidth;
+  const itemX = menuProps.value.itemX;
 
   let leftPosition = 0;
   anchorPositionHorizontal === 'right'
@@ -27,6 +28,16 @@ export const leftOrRight = (
         -menuProps.value.itemWidth -
         MENU_WIDTH / 2 +
         menuProps.value.itemWidth / 2);
+
+  const menuRightEdge = itemX + leftPosition + MENU_WIDTH;
+  if (menuRightEdge > WINDOW_WIDTH) {
+    leftPosition -= menuRightEdge - WINDOW_WIDTH + 16;
+  }
+
+  // Проверка левой границы
+  if (itemX + leftPosition < 0) {
+    leftPosition = -itemX + 16;
+  }
 
   return leftPosition;
 };

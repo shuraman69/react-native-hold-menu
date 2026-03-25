@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Animated, {
+  useAnimatedProps,
   useAnimatedStyle,
   withSpring,
   withTiming,
@@ -18,6 +19,10 @@ import {
 
 const MenuComponent = () => {
   const { state, menuProps } = useInternal();
+
+  const animatedProps = useAnimatedProps(() => ({
+    pointerEvents: state.value === CONTEXT_MENU_STATE.ACTIVE ? 'auto' : 'none',
+  }));
 
   const wrapperStyles = useAnimatedStyle(() => {
     const anchorPositionVertical = menuProps.value.anchorPosition.split('-')[0];
@@ -46,7 +51,11 @@ const MenuComponent = () => {
   }, [menuProps]);
 
   return (
-    <Animated.View style={[styles.menuWrapper, wrapperStyles]}>
+    <Animated.View
+      style={[styles.menuWrapper, wrapperStyles]}
+      // @ts-ignore
+      animatedProps={animatedProps}
+    >
       <MenuList />
     </Animated.View>
   );
