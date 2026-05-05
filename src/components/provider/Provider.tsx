@@ -49,6 +49,7 @@ const ProviderComponent = ({
     transformValue: 0,
     actionParams: {},
     hasCustomView: false,
+    isTallItem: false,
   });
   const customViewRef = useRef<RenderCustomView | null>(null);
 

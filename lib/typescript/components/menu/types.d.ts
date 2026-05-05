@@ -32,4 +32,5 @@ export type MenuInternalProps = {
     [name: string]: (string | number)[];
   };
   hasCustomView: boolean;
+  isTallItem: boolean;
 };

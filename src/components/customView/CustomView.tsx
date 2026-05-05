@@ -21,7 +21,7 @@ import {
 import { RenderCustomView } from '../menu/types';
 
 const CustomViewComponent = () => {
-  const { state, menuProps, customViewRef } = useInternal();
+  const { state, menuProps, customViewRef, safeAreaInsets } = useInternal();
 
   const [renderFn, setRenderFn] = useState<RenderCustomView | null>(null);
   const [customViewHeight, setCustomViewHeight] = useState(0);
@@ -72,12 +72,38 @@ const CustomViewComponent = () => {
   const wrapperStyles = useAnimatedStyle(() => {
     const anchorPositionVertical = menuProps.value.anchorPosition.split('-')[0];
     const isAbove = anchorPositionVertical === 'top';
-
-    // Fixed anchor point: top of the item
-    const top = menuProps.value.itemY;
+    const isTallItem = menuProps.value.isTallItem;
 
     const SCREEN_PADDING = 16;
     const MAX_WIDTH = WINDOW_WIDTH - SCREEN_PADDING * 2;
+
+    // For tall items: fixed position at top-left with safeAreaInsets.top * 3
+    if (isTallItem) {
+      const topOffset = (safeAreaInsets?.top || 0) * 3;
+
+      const scaleAnimation =
+        state.value === CONTEXT_MENU_STATE.ACTIVE
+          ? withDelay(150, withSpring(1, SPRING_CONFIGURATION_MENU))
+          : withTiming(0, { duration: HOLD_ITEM_TRANSFORM_DURATION });
+
+      const opacityAnimation = withDelay(
+        150,
+        withTiming(state.value === CONTEXT_MENU_STATE.ACTIVE ? 1 : 0, {
+          duration: HOLD_ITEM_TRANSFORM_DURATION,
+        })
+      );
+
+      return {
+        top: topOffset,
+        left: SCREEN_PADDING,
+        maxWidth: MAX_WIDTH,
+        opacity: opacityAnimation,
+        transform: [{ scale: scaleAnimation }],
+      };
+    }
+
+    // Fixed anchor point: top of the item
+    const top = menuProps.value.itemY;
 
     // Start at item's left edge
     let left = menuProps.value.itemX;
@@ -142,7 +168,7 @@ const CustomViewComponent = () => {
         { translateY: -scaleAnchorOffset },
       ],
     };
-  }, [menuProps, customViewHeight, customViewWidth]);
+  }, [menuProps, customViewHeight, customViewWidth, safeAreaInsets]);
 
   if (!renderFn) return null;
 
