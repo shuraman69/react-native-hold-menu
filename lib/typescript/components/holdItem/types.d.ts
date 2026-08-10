@@ -141,6 +141,17 @@ type HoldItemBaseProps = {
    * onActivate={() => console.log('Menu opened')}
    */
   onActivate?: () => void;
+
+  /**
+   * Number of items the menu shows at once. When `items` is longer than this,
+   * the menu keeps the height of that many rows and the rest is reached by
+   * scrolling. Leave it unset (or 0) to always size the menu to all items.
+   * @type number
+   * @default 0
+   * @examples
+   * maxVisibleItems={5}
+   */
+  maxVisibleItems?: number;
 };
 
 export type HoldItemProps = HoldItemBaseProps;

@@ -68,6 +68,7 @@ const HoldItemComponent = ({
   closeOnTap,
   longPressMinDurationMs = 150,
   onActivate,
+  maxVisibleItems = 0,
   children,
 }: HoldItemProps) => {
   //#region hooks
@@ -94,8 +95,12 @@ const HoldItemComponent = ({
   const menuHeight = useMemo(() => {
     if (!items || items.length === 0) return 0;
     const itemsWithSeparator = items.filter(item => item.withSeparator);
-    return calculateMenuHeight(items.length, itemsWithSeparator.length);
-  }, [items]);
+    return calculateMenuHeight(
+      items.length,
+      itemsWithSeparator.length,
+      maxVisibleItems
+    );
+  }, [items, maxVisibleItems]);
 
   const isHold = !activateOn || activateOn === 'hold';
   //#endregion
@@ -230,6 +235,7 @@ const HoldItemComponent = ({
       actionParams: actionParams || {},
       hasCustomView: !!renderCustomView,
       isTallItem: isTallItem,
+      maxVisibleItems: maxVisibleItems,
     };
   };
 

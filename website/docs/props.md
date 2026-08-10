@@ -253,3 +253,17 @@ Set delay before long tap will activate gesture. May be useful to increase this 
 ```tsx
 <HoldItem longPressMinDurationMs={250} />
 ```
+
+### `maxVisibleItems`
+
+Number of items the menu shows at once. When `items` is longer than this, the menu keeps the height of that many rows and the rest is reached by scrolling. Leave it unset (or `0`) to always size the menu to all items.
+
+| type   | default | required |
+| ------ | ------- | -------- |
+| number | 0       | NO       |
+
+#### Example
+
+```tsx
+<HoldItem items={twentyItems} maxVisibleItems={5} />
+```

@@ -13,15 +13,32 @@ export const MenuItemHeight = () => {
   );
 };
 
+/**
+ * Height the menu needs to lay out its items.
+ *
+ * When `maxVisibleItems` is set and there are more items than that, the height
+ * is capped to exactly that many rows — the menu keeps that size and the
+ * remaining items are reached by scrolling. Separators are left out of the
+ * capped height on purpose, so the cap always means "N rows tall".
+ */
 export const calculateMenuHeight = (
   itemLength: number,
-  separatorCount: number
+  separatorCount: number,
+  maxVisibleItems?: number
 ) => {
   'worklet';
+  const cappedLength =
+    maxVisibleItems && maxVisibleItems > 0 && itemLength > maxVisibleItems
+      ? maxVisibleItems
+      : 0;
+
+  const visibleLength = cappedLength || itemLength;
+  const visibleSeparatorCount = cappedLength ? 0 : separatorCount;
+
   return (
-    MenuItemHeight() * itemLength +
-    (itemLength - 1) +
-    separatorCount * styleGuide.spacing
+    MenuItemHeight() * visibleLength +
+    (visibleLength - 1) +
+    visibleSeparatorCount * styleGuide.spacing
   );
 };
 
@@ -37,10 +54,15 @@ export const menuAnimationAnchor = (
   anchorPoint: TransformOriginAnchorPosition,
   itemWidth: number,
   itemLength: number,
-  itemsWithSeparatorLength: number
+  itemsWithSeparatorLength: number,
+  maxVisibleItems?: number
 ) => {
   'worklet';
-  const MenuHeight = calculateMenuHeight(itemLength, itemsWithSeparatorLength);
+  const MenuHeight = calculateMenuHeight(
+    itemLength,
+    itemsWithSeparatorLength,
+    maxVisibleItems
+  );
   const splittetAnchorName: string[] = anchorPoint.split('-');
 
   const Center1 = itemWidth;

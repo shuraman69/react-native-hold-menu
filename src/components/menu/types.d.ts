@@ -33,4 +33,6 @@ export type MenuInternalProps = {
   };
   hasCustomView: boolean;
   isTallItem: boolean;
+  /** Rows the menu shows before it starts scrolling. 0 means no limit. */
+  maxVisibleItems: number;
 };

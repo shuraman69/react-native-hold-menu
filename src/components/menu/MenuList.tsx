@@ -41,7 +41,8 @@ const MenuListComponent = () => {
     );
     return calculateMenuHeight(
       menuProps.value.items.length,
-      itemsWithSeparator.length
+      itemsWithSeparator.length,
+      menuProps.value.maxVisibleItems
     );
   }, [menuProps]);
   const prevList = useSharedValue<MenuItemProps[]>([]);
@@ -55,7 +56,8 @@ const MenuListComponent = () => {
       menuProps.value.anchorPosition,
       menuProps.value.itemWidth,
       menuProps.value.items.length,
-      itemsWithSeparator.length
+      itemsWithSeparator.length,
+      menuProps.value.maxVisibleItems
     );
 
     const _leftPosition = leftOrRight(menuProps);
@@ -112,15 +114,20 @@ const MenuListComponent = () => {
 
   return (
     <Animated.View style={[styles.menuContainer, messageStyles]}>
-      <Animated.View
-        style={[
-          StyleSheet.absoluteFillObject,
-          styles.menuInnerContainer,
-          animatedInnerContainerStyle,
-        ]}
+      <Animated.ScrollView
+        style={[StyleSheet.absoluteFillObject, animatedInnerContainerStyle]}
+        contentContainerStyle={styles.menuInnerContainer}
+        // The menu is only as tall as `maxVisibleItems` allows, so anything
+        // past that is reached by scrolling. Shorter lists fit the container
+        // and stay put — hence no idle bounce.
+        alwaysBounceVertical={false}
+        nestedScrollEnabled
+        // The menu floats in a portal, so iOS must not fold navigation bar
+        // insets into its content offset.
+        contentInsetAdjustmentBehavior={'never'}
       >
         <MenuItems items={itemList} />
-      </Animated.View>
+      </Animated.ScrollView>
     </Animated.View>
   );
 };
