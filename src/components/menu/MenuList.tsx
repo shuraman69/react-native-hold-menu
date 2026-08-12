@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import Animated, {
   runOnJS,
@@ -29,6 +30,12 @@ import { MenuItemProps } from './types';
 import { useInternal } from '../../hooks';
 import { deepEqual } from '../../utils/validations';
 import { leftOrRight } from './calculations';
+
+// gesture-handler's ScrollView is wrapped in a NativeViewGestureHandler, so on
+// Android the RNGH orchestrator hands the drag to it instead of the backdrop's
+// full-screen TapGestureHandler. With the plain react-native ScrollView the
+// menu never starts scrolling on Android.
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
 const MenuListComponent = () => {
   const { state, theme, menuProps } = useInternal();
@@ -114,7 +121,7 @@ const MenuListComponent = () => {
 
   return (
     <Animated.View style={[styles.menuContainer, messageStyles]}>
-      <Animated.ScrollView
+      <AnimatedScrollView
         style={[StyleSheet.absoluteFillObject, animatedInnerContainerStyle]}
         contentContainerStyle={styles.menuInnerContainer}
         // The menu is only as tall as `maxVisibleItems` allows, so anything
@@ -127,7 +134,7 @@ const MenuListComponent = () => {
         contentInsetAdjustmentBehavior={'never'}
       >
         <MenuItems items={itemList} />
-      </Animated.ScrollView>
+      </AnimatedScrollView>
     </Animated.View>
   );
 };
