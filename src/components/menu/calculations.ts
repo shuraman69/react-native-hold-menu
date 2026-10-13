@@ -10,6 +10,8 @@ import {
 } from './constants';
 import type { MenuInternalProps } from './types';
 
+const SCREEN_EDGE_PADDING = 16;
+
 export const leftOrRight = (
   menuProps: SharedValue<MenuInternalProps>
 ) => {
@@ -29,14 +31,17 @@ export const leftOrRight = (
         MENU_WIDTH / 2 +
         menuProps.value.itemWidth / 2);
 
-  const menuRightEdge = itemX + leftPosition + MENU_WIDTH;
-  if (menuRightEdge > WINDOW_WIDTH) {
-    leftPosition -= menuRightEdge - WINDOW_WIDTH + 16;
-  }
+  // menuAnimationAnchor for a centered anchor leaves an extra translateX of
+  // itemWidth once the menu is fully scaled, so screen bounds must be checked
+  // against the visual position, not just `left`
+  const anchorOffsetX = anchorPositionHorizontal === 'center' ? itemWidth : 0;
+  const visualLeft = itemX + leftPosition + anchorOffsetX;
 
-  // Проверка левой границы
-  if (itemX + leftPosition < 0) {
-    leftPosition = -itemX + 16;
+  if (visualLeft + MENU_WIDTH > WINDOW_WIDTH - SCREEN_EDGE_PADDING) {
+    leftPosition -=
+      visualLeft + MENU_WIDTH - (WINDOW_WIDTH - SCREEN_EDGE_PADDING);
+  } else if (visualLeft < SCREEN_EDGE_PADDING) {
+    leftPosition += SCREEN_EDGE_PADDING - visualLeft;
   }
 
   return leftPosition;

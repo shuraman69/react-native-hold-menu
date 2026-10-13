@@ -16,6 +16,7 @@ import {
   CONTEXT_MENU_STATE,
   SPRING_CONFIGURATION,
   SPRING_CONFIGURATION_MENU,
+  WINDOW_HEIGHT,
   WINDOW_WIDTH,
 } from '../../constants';
 import { RenderCustomView } from '../menu/types';
@@ -126,9 +127,23 @@ const CustomViewComponent = () => {
     // Positional offset via translateY:
     // above item: shift up by customViewHeight + gap
     // below item: shift down by itemHeight + gap
-    const positionOffsetY = isAbove
+    let positionOffsetY = isAbove
       ? -(customViewHeight + 8)
       : menuProps.value.itemHeight + 8;
+
+    // The item is centered on screen, so a tall custom view (e.g. an expanded
+    // emoji grid) may not fit next to it — keep it inside the safe area
+    if (customViewHeight > 0) {
+      const minTop = (safeAreaInsets?.top || 0) + 8;
+      const maxBottom = WINDOW_HEIGHT - (safeAreaInsets?.bottom || 0) - 8;
+      const visualTop = top + tY + positionOffsetY;
+
+      if (visualTop < minTop) {
+        positionOffsetY += minTop - visualTop;
+      } else if (visualTop + customViewHeight > maxBottom) {
+        positionOffsetY -= visualTop + customViewHeight - maxBottom;
+      }
+    }
 
     const scaleAnimation =
       state.value === CONTEXT_MENU_STATE.ACTIVE
