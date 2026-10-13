@@ -1,4 +1,4 @@
-export declare type StateProps = {
+export type StateProps = {
     active: number;
     activeItem: string | null;
     theme: 'light' | 'dark';
@@ -8,7 +8,7 @@ export declare enum ActionType {
     End = "End",
     Theme = "Theme"
 }
-export declare type Action = {
+export type Action = {
     type: ActionType.Active;
     activeItem: string | null;
 } | {

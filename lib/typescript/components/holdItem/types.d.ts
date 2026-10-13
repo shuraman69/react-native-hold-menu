@@ -155,7 +155,3 @@ type HoldItemBaseProps = {
 };
 
 export type HoldItemProps = HoldItemBaseProps;
-
-export type GestureHandlerProps = {
-  children: React.ReactElement | React.ReactElement[];
-};

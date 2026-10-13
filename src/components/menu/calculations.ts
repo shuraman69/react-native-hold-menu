@@ -1,4 +1,4 @@
-import Animated from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
 
 import { MENU_WIDTH, WINDOW_WIDTH } from '../../constants';
 import {
@@ -11,7 +11,7 @@ import {
 import type { MenuInternalProps } from './types';
 
 export const leftOrRight = (
-  menuProps: Animated.SharedValue<MenuInternalProps>
+  menuProps: SharedValue<MenuInternalProps>
 ) => {
   'worklet';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-declare type IconProps = {
+type IconProps = {
     iconComponent: any;
     name: string;
 };

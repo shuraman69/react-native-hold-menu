@@ -7,9 +7,9 @@ export declare const MenuItemHeight: () => number;
  * remaining items are reached by scrolling. Separators are left out of the
  * capped height on purpose, so the cap always means "N rows tall".
  */
-export declare const calculateMenuHeight: (itemLength: number, separatorCount: number, maxVisibleItems?: number | undefined) => number;
-export declare type TransformOriginAnchorPosition = 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left' | 'bottom-center';
-export declare const menuAnimationAnchor: (anchorPoint: TransformOriginAnchorPosition, itemWidth: number, itemLength: number, itemsWithSeparatorLength: number, maxVisibleItems?: number | undefined) => {
+export declare const calculateMenuHeight: (itemLength: number, separatorCount: number, maxVisibleItems?: number) => number;
+export type TransformOriginAnchorPosition = 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left' | 'bottom-center';
+export declare const menuAnimationAnchor: (anchorPoint: TransformOriginAnchorPosition, itemWidth: number, itemLength: number, itemsWithSeparatorLength: number, maxVisibleItems?: number) => {
     beginningTransformations: {
         translateX: number;
         translateY: number;
@@ -19,4 +19,4 @@ export declare const menuAnimationAnchor: (anchorPoint: TransformOriginAnchorPos
         translateY: number;
     };
 };
-export declare const getTransformOrigin: (posX: number, itemWidth: number, windowWidth: number, bottom?: boolean | undefined) => TransformOriginAnchorPosition;
+export declare const getTransformOrigin: (posX: number, itemWidth: number, windowWidth: number, bottom?: boolean) => TransformOriginAnchorPosition;

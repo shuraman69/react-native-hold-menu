@@ -2,16 +2,10 @@ import React, { memo, useMemo } from 'react';
 import { ViewProps } from 'react-native';
 
 //#region reanimated & gesture handler
-import {
-  TapGestureHandler,
-  LongPressGestureHandler,
-  TapGestureHandlerGestureEvent,
-  LongPressGestureHandlerGestureEvent,
-} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   measure,
   runOnJS,
-  useAnimatedGestureHandler,
   useAnimatedProps,
   useAnimatedRef,
   useAnimatedStyle,
@@ -48,12 +42,10 @@ import {
 import { useDeviceOrientation } from '../../hooks';
 import styles from './styles';
 
-import type { HoldItemProps, GestureHandlerProps } from './types';
+import type { HoldItemProps } from './types';
 import styleGuide from '../../styleGuide';
 import { useInternal } from '../../hooks';
 //#endregion
-
-type Context = { didMeasureLayout: boolean };
 
 const HoldItemComponent = ({
   items,
@@ -79,6 +71,7 @@ const HoldItemComponent = ({
   //#region variables
   const isActive = useSharedValue(false);
   const isAnimationStarted = useSharedValue(false);
+  const didMeasureLayout = useSharedValue(false);
 
   const itemRectY = useSharedValue<number>(0);
   const itemRectX = useSharedValue<number>(0);
@@ -132,10 +125,13 @@ const HoldItemComponent = ({
   //#endregion
 
   //#region worklet functions
-  const activateAnimation = (ctx: any) => {
+  const activateAnimation = () => {
     'worklet';
-    if (!ctx.didMeasureLayout) {
+    if (!didMeasureLayout.value) {
       const measured = measure(containerRef);
+      if (!measured) {
+        return;
+      }
 
       itemRectY.value = measured.pageY;
       itemRectX.value = measured.pageX;
@@ -308,44 +304,61 @@ const HoldItemComponent = ({
   };
   //#endregion
 
-  //#region gesture events
-  const gestureEvent = useAnimatedGestureHandler<
-    LongPressGestureHandlerGestureEvent | TapGestureHandlerGestureEvent,
-    Context
-  >({
-    onActive: (_, context) => {
-      if (canCallActivateFunctions()) {
-        if (!context.didMeasureLayout) {
-          activateAnimation(context);
-          transformValue.value = calculateTransformValue();
-          setMenuProps();
-          context.didMeasureLayout = true;
-        }
+  //#region gestures
+  const onGestureActive = () => {
+    'worklet';
+    if (canCallActivateFunctions()) {
+      if (!didMeasureLayout.value) {
+        activateAnimation();
+        transformValue.value = calculateTransformValue();
+        setMenuProps();
+        didMeasureLayout.value = true;
+      }
 
-        if (!isActive.value) {
-          if (isHold) {
-            scaleHold();
-          } else {
-            scaleTap();
-          }
+      if (!isActive.value) {
+        if (isHold) {
+          scaleHold();
+        } else {
+          scaleTap();
         }
       }
-    },
-    onFinish: (_, context) => {
-      context.didMeasureLayout = false;
-      if (isHold) {
-        scaleBack();
-      }
-    },
-  });
+    }
+  };
 
-  const overlayGestureEvent = useAnimatedGestureHandler<
-    TapGestureHandlerGestureEvent,
-    Context
-  >({
-    onActive: _ => {
-      if (closeOnTap) state.value = CONTEXT_MENU_STATE.END;
-    },
+  const onGestureFinish = () => {
+    'worklet';
+    didMeasureLayout.value = false;
+    if (isHold) {
+      scaleBack();
+    }
+  };
+
+  const gesture =
+    activateOn === 'double-tap' || activateOn === 'tap'
+      ? Gesture.Tap()
+          .numberOfTaps(activateOn === 'double-tap' ? 2 : 1)
+          .onStart(() => {
+            'worklet';
+            onGestureActive();
+          })
+          .onFinalize(() => {
+            'worklet';
+            onGestureFinish();
+          })
+      : Gesture.LongPress()
+          .minDuration(longPressMinDurationMs)
+          .onStart(() => {
+            'worklet';
+            onGestureActive();
+          })
+          .onFinalize(() => {
+            'worklet';
+            onGestureFinish();
+          });
+
+  const overlayGesture = Gesture.Tap().onStart(() => {
+    'worklet';
+    if (closeOnTap) state.value = CONTEXT_MENU_STATE.END;
   });
   //#endregion
 
@@ -423,60 +436,14 @@ const HoldItemComponent = ({
   );
   //#endregion
 
-  //#region components
-  const GestureHandler = useMemo(() => {
-    switch (activateOn) {
-      case `double-tap`:
-        return ({ children: handlerChildren }: GestureHandlerProps) => (
-          <TapGestureHandler
-            numberOfTaps={2}
-            onHandlerStateChange={gestureEvent}
-          >
-            {handlerChildren}
-          </TapGestureHandler>
-        );
-      case `tap`:
-        return ({ children: handlerChildren }: GestureHandlerProps) => (
-          <TapGestureHandler
-            numberOfTaps={1}
-            onHandlerStateChange={gestureEvent}
-          >
-            {handlerChildren}
-          </TapGestureHandler>
-        );
-      // default is hold
-      default:
-        return ({ children: handlerChildren }: GestureHandlerProps) => (
-          <LongPressGestureHandler
-            minDurationMs={longPressMinDurationMs}
-            onHandlerStateChange={gestureEvent}
-          >
-            {handlerChildren}
-          </LongPressGestureHandler>
-        );
-    }
-  }, [activateOn, gestureEvent]);
-
-  const PortalOverlay = useMemo(() => {
-    return () => (
-      <TapGestureHandler
-        numberOfTaps={1}
-        onHandlerStateChange={overlayGestureEvent}
-      >
-        <Animated.View style={styles.portalOverlay} />
-      </TapGestureHandler>
-    );
-  }, [overlayGestureEvent]);
-  //#endregion
-
   //#region render
   return (
     <>
-      <GestureHandler>
+      <GestureDetector gesture={gesture}>
         <Animated.View ref={containerRef} style={containerStyle}>
           {children}
         </Animated.View>
-      </GestureHandler>
+      </GestureDetector>
 
       <Portal key={key} name={key}>
         <Animated.View
@@ -484,7 +451,9 @@ const HoldItemComponent = ({
           style={portalContainerStyle}
           animatedProps={animatedPortalProps}
         >
-          <PortalOverlay />
+          <GestureDetector gesture={overlayGesture}>
+            <Animated.View style={styles.portalOverlay} />
+          </GestureDetector>
           {children}
         </Animated.View>
       </Portal>

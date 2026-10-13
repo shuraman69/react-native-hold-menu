@@ -1,6 +1,6 @@
 import React from 'react';
 import { MenuItemProps } from './types';
-declare type MenuItemComponentProps = {
+type MenuItemComponentProps = {
     item: MenuItemProps;
     isLast?: boolean;
 };

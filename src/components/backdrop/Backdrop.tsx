@@ -1,16 +1,13 @@
 import React, { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, {
-  useAnimatedGestureHandler,
   useAnimatedProps,
   useAnimatedStyle,
+  useSharedValue,
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import {
-  TapGestureHandler,
-  TapGestureHandlerGestureEvent,
-} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 // Components
 import { BlurView } from '@react-native-community/blur';
@@ -33,42 +30,36 @@ const AnimatedBlurView = IS_IOS
   ? Animated.createAnimatedComponent(BlurView)
   : Animated.View;
 
-type Context = {
-  startPosition: {
-    x: number;
-    y: number;
-  };
-};
-
 const BackdropComponent = () => {
   const { state, theme } = useInternal();
 
-  const tapGestureEvent = useAnimatedGestureHandler<
-    TapGestureHandlerGestureEvent,
-    Context
-  >(
-    {
-      onStart: (event, context) => {
-        context.startPosition = { x: event.x, y: event.y };
-      },
-      onCancel: () => {
-        state.value = CONTEXT_MENU_STATE.END;
-      },
-      onEnd: (event, context) => {
-        const distance = Math.hypot(
-          event.x - context.startPosition.x,
-          event.y - context.startPosition.y
-        );
-        const shouldClose = distance < 10;
-        const isStateActive = state.value === CONTEXT_MENU_STATE.ACTIVE;
+  const startPosition = useSharedValue({ x: 0, y: 0 });
 
-        if (shouldClose && isStateActive) {
-          state.value = CONTEXT_MENU_STATE.END;
-        }
-      },
-    },
-    [state]
-  );
+  const tapGesture = Gesture.Tap()
+    .onBegin(event => {
+      'worklet';
+      startPosition.value = { x: event.x, y: event.y };
+    })
+    .onTouchesCancelled(() => {
+      'worklet';
+      state.value = CONTEXT_MENU_STATE.END;
+    })
+    .onEnd((event, success) => {
+      'worklet';
+      if (!success) {
+        return;
+      }
+      const distance = Math.hypot(
+        event.x - startPosition.value.x,
+        event.y - startPosition.value.y
+      );
+      const shouldClose = distance < 10;
+      const isStateActive = state.value === CONTEXT_MENU_STATE.ACTIVE;
+
+      if (shouldClose && isStateActive) {
+        state.value = CONTEXT_MENU_STATE.END;
+      }
+    });
 
   const animatedContainerStyle = useAnimatedStyle(() => {
     const topValueAnimation = () =>
@@ -113,7 +104,7 @@ const BackdropComponent = () => {
   }, [theme]);
 
   return (
-    <TapGestureHandler onHandlerStateChange={tapGestureEvent}>
+    <GestureDetector gesture={tapGesture}>
       <AnimatedBlurView
         // @ts-ignore
         tint="default"
@@ -127,7 +118,7 @@ const BackdropComponent = () => {
           ]}
         />
       </AnimatedBlurView>
-    </TapGestureHandler>
+    </GestureDetector>
   );
 };
 
