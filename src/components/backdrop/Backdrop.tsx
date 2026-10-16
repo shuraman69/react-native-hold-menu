@@ -21,6 +21,7 @@ import {
   WINDOW_HEIGHT,
 } from '../../constants';
 import {
+  BACKDROP_BLUR_AMOUNT,
   BACKDROP_LIGHT_BACKGROUND_COLOR,
   BACKDROP_DARK_BACKGROUND_COLOR,
 } from './constants';
@@ -86,7 +87,7 @@ const BackdropComponent = () => {
   const animatedContainerProps = useAnimatedProps(() => {
     return {
       blurAmount: withTiming(
-        state.value === CONTEXT_MENU_STATE.ACTIVE ? 100 : 0,
+        state.value === CONTEXT_MENU_STATE.ACTIVE ? BACKDROP_BLUR_AMOUNT : 0,
         {
           duration: HOLD_ITEM_TRANSFORM_DURATION,
         }
@@ -107,7 +108,8 @@ const BackdropComponent = () => {
     <GestureDetector gesture={tapGesture}>
       <AnimatedBlurView
         // @ts-ignore
-        tint="default"
+        tint="dark"
+        blurType={'dark'}
         animatedProps={animatedContainerProps}
         style={[styles.container, animatedContainerStyle]}
       >
