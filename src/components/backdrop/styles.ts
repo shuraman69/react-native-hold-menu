@@ -1,8 +1,9 @@
 import { StyleSheet } from 'react-native';
+import { ABSOLUTE_FILL } from '../../constants';
 
 export const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...ABSOLUTE_FILL,
     zIndex: 0,
   },
 });

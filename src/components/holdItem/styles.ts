@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { ABSOLUTE_FILL } from '../../constants';
 
 const styles = StyleSheet.create({
   holdItem: { zIndex: 10, position: 'absolute' },
   portalOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...ABSOLUTE_FILL,
     zIndex: 15,
   },
 });

@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import { StyleSheet } from 'react-native';
 import Animated, {
   useAnimatedProps,
   useAnimatedStyle,
@@ -15,6 +14,7 @@ import { BlurView } from '@react-native-community/blur';
 // Utils
 import { styles } from './styles';
 import {
+  ABSOLUTE_FILL,
   CONTEXT_MENU_STATE,
   HOLD_ITEM_TRANSFORM_DURATION,
   IS_IOS,
@@ -113,7 +113,7 @@ const BackdropComponent = () => {
       >
         <Animated.View
           style={[
-            { ...StyleSheet.absoluteFillObject },
+            ABSOLUTE_FILL,
             animatedInnerContainerStyle,
           ]}
         />

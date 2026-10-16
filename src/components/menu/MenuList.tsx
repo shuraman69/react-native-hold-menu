@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import Animated, {
@@ -20,6 +19,7 @@ import {
 import MenuItems from './MenuItems';
 
 import {
+  ABSOLUTE_FILL,
   SPRING_CONFIGURATION_MENU,
   HOLD_ITEM_TRANSFORM_DURATION,
   CONTEXT_MENU_STATE,
@@ -122,7 +122,7 @@ const MenuListComponent = () => {
   return (
     <Animated.View style={[styles.menuContainer, messageStyles]}>
       <AnimatedScrollView
-        style={[StyleSheet.absoluteFillObject, animatedInnerContainerStyle]}
+        style={[ABSOLUTE_FILL, animatedInnerContainerStyle]}
         contentContainerStyle={styles.menuInnerContainer}
         // The menu is only as tall as `maxVisibleItems` allows, so anything
         // past that is reached by scrolling. Shorter lists fit the container

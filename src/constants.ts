@@ -37,6 +37,16 @@ const IS_IOS = Platform.OS === 'ios';
 
 const FONT_SCALE = Dimensions.get('screen').fontScale;
 
+// StyleSheet.absoluteFillObject removed in RN 0.85, and StyleSheet.absoluteFill
+// is a registered style id (number) on older RN versions, so it can't be spread
+const ABSOLUTE_FILL = {
+  position: 'absolute' as const,
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+};
+
 export {
   CONTEXT_MENU_STATE,
   WINDOW_HEIGHT,
@@ -51,4 +61,5 @@ export {
   MENU_TRANSFORM_ORIGIN_TOLERENCE,
   IS_IOS,
   FONT_SCALE,
+  ABSOLUTE_FILL,
 };
