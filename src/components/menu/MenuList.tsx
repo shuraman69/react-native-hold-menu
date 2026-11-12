@@ -41,6 +41,7 @@ const MenuListComponent = () => {
   const { state, theme, menuProps } = useInternal();
 
   const [itemList, setItemList] = React.useState<MenuItemProps[]>([]);
+  const [isScrollable, setIsScrollable] = React.useState(false);
 
   const menuHeight = useDerivedValue(() => {
     const itemsWithSeparator = menuProps.value.items.filter(
@@ -119,22 +120,47 @@ const MenuListComponent = () => {
     [menuProps]
   );
 
+  useAnimatedReaction(
+    () =>
+      menuProps.value.maxVisibleItems > 0 &&
+      menuProps.value.items.length > menuProps.value.maxVisibleItems,
+    (scrollable, prevScrollable) => {
+      if (scrollable !== prevScrollable) {
+        runOnJS(setIsScrollable)(scrollable);
+      }
+    },
+    [menuProps]
+  );
+
   return (
     <Animated.View style={[styles.menuContainer, messageStyles]}>
-      <AnimatedScrollView
-        style={[ABSOLUTE_FILL, animatedInnerContainerStyle]}
-        contentContainerStyle={styles.menuInnerContainer}
-        // The menu is only as tall as `maxVisibleItems` allows, so anything
-        // past that is reached by scrolling. Shorter lists fit the container
-        // and stay put — hence no idle bounce.
-        alwaysBounceVertical={false}
-        nestedScrollEnabled
-        // The menu floats in a portal, so iOS must not fold navigation bar
-        // insets into its content offset.
-        contentInsetAdjustmentBehavior={'never'}
-      >
-        <MenuItems items={itemList} />
-      </AnimatedScrollView>
+      {isScrollable ? (
+        <AnimatedScrollView
+          style={[ABSOLUTE_FILL, animatedInnerContainerStyle]}
+          contentContainerStyle={styles.menuInnerContainer}
+          // The menu is only as tall as `maxVisibleItems` allows, so anything
+          // past that is reached by scrolling.
+          alwaysBounceVertical={false}
+          nestedScrollEnabled
+          // The menu floats in a portal, so iOS must not fold navigation bar
+          // insets into its content offset.
+          contentInsetAdjustmentBehavior={'never'}
+        >
+          <MenuItems items={itemList} />
+        </AnimatedScrollView>
+      ) : (
+        // A list that fits is a plain view: on iOS 26 a scroll view draws the
+        // system scroll edge effect over its top and blurs the first items.
+        <Animated.View
+          style={[
+            ABSOLUTE_FILL,
+            styles.menuInnerContainer,
+            animatedInnerContainerStyle,
+          ]}
+        >
+          <MenuItems items={itemList} />
+        </Animated.View>
+      )}
     </Animated.View>
   );
 };
